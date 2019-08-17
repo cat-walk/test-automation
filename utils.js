@@ -1,3 +1,12 @@
+/*
+ * @Author: Alfred Yang
+ * @Github: https://github.com/cat-walk
+ * @Date: 2019-08-12 19:47:24
+ * @LastEditors: Alfred Yang
+ * @LastEditTime: 2019-08-17 19:39:43
+ * @Description: file content
+ */
+
 const fs = require('fs');
 
 // let conCurrent = (fn, limit, asyncHandle) => {
@@ -22,25 +31,64 @@ const run = async (fn, times, totalTime) => {
       concurrentPool.push(fn());
       hasRun++;
       if (hasRun === times) {
-        console.log('concurrentPool', concurrentPool);
-        Promise.all(concurrentPool).then(() => {
-          clearInterval(timer);
-          timer = null;
-          console.log('hasRun', hasRun);
-          console.log('111');
-          resolve();
-        }).catch((err) => {
-          console.log(err);
-          reject();
-        })
+        // console.log('concurrentPool', concurrentPool);
+        clearInterval(timer);
+        timer = null;
+        console.log('hasRun', hasRun);
+        if (concurrentPool.length === 0) resolve();
+        else {
+          Promise.all(concurrentPool)
+            .then(() => {
+              resolve();
+            })
+            .catch(err => {
+              console.log(err);
+              reject();
+            });
+        }
       }
     }, interval);
   });
 };
 
-const saveData = data => {
-  const out = fs.createWriteStream('./anotherMessage.json');
+const saveData = (data, destinationDir) => {
+  const out = fs.createWriteStream(destinationDir);
   out.write(data);
 };
 
-module.exports = { run, saveData };
+const getAverage = allData => {
+  // console.log('allData', allData);
+  const average = {};
+  const amount = allData.length;
+  allData.forEach(item => {
+    for (const key in item) {
+      const value = item[key];
+      if (key in average) average[key] += value;
+      else average[key] = value;
+    }
+  });
+  for (const key in average) {
+    const value = average[key];
+    average[key] = (value / amount).toFixed(0);
+  }
+  average.amount = amount;
+  return average;
+};
+
+// const findTheBestThreadNum = (totalTimes, fn) => {
+//   const minPagesPerBrowser = 5;
+//   const maxPagesPerBrowser = 10;
+//   for (
+//     let pagesPerBrowser = minPagesPerBrowser;
+//     pagesPerBrowser < maxPagesPerBrowser;
+//     pagesPerBrowser++
+//   ) {
+//     const threadNum = totalTimes / pagesPerBrowser;
+//     if (threadNum > 50) {
+//       break; // To avoid the computer burned
+//     }
+//     fn(pagesPerBrowser, threadNum);
+//   }
+// };
+
+module.exports = { run, saveData, getAverage };
