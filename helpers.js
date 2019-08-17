@@ -1,10 +1,15 @@
-const getTimeFromPerformanceMetrics = (metrics, name) => {
-  const metric = metrics.metrics.find(x => x.name === name);
-  if (metric) return (metric.value * 1000).toFixed(0);
-};
+/*
+ * @Author: Alfred Yang
+ * @Github: https://github.com/cat-walk
+ * @Date: 2019-08-12 17:42:17
+ * @LastEditors: Alfred Yang
+ * @LastEditTime: 2019-08-17 20:18:21
+ * @Description: file content
+ */
+const getTimeFromPerformanceMetrics = (metrics, name) => metrics.metrics.find(x => x.name === name).value * 1000;
 
 const extractDataFromPerformanceTiming = (timing, ...dataNames) => {
-  const navigationStart = timing.navigationStart;
+  const { navigationStart } = timing;
 
   const extractedData = {};
   dataNames.forEach(name => {
@@ -22,8 +27,7 @@ const extractDataFromPerformanceMetrics = (metrics, ...dataNames) => {
 
   const extractedData = {};
   dataNames.forEach(name => {
-    extractedData[name] =
-      getTimeFromPerformanceMetrics(metrics, name) - navigationStart;
+    extractedData[name] = getTimeFromPerformanceMetrics(metrics, name) - navigationStart;
   });
 
   return extractedData;
@@ -31,5 +35,6 @@ const extractDataFromPerformanceMetrics = (metrics, ...dataNames) => {
 
 module.exports = {
   extractDataFromPerformanceMetrics,
-  extractDataFromPerformanceTiming
+  extractDataFromPerformanceTiming,
+  getTimeFromPerformanceMetrics
 };
