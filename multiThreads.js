@@ -3,7 +3,7 @@
  * @Github: https://github.com/cat-walk
  * @Date: 2019-08-17 16:59:21
  * @LastEditors: Alfred Yang
- * @LastEditTime: 2019-08-17 19:59:17
+ * @LastEditTime: 2019-08-19 01:47:35
  * @Description: file content
  */
 const EventEmitter = require('events');
@@ -25,9 +25,10 @@ EventEmitter.defaultMaxListeners = 100;
 
 let allData = [];
 let stopedWorker = 0;
-const threadNum = 1;
-const pagePerBrowser = 5;
-const timeOfABrowser = 1000;
+const totalTime = 1000;
+const threadNum = 10;
+const pagesPerBrowser = 5;
+const timeOfABrowser = totalTime / threadNum;
 
 const workOfABrowser = async () => {
   const browser = await puppeteer.launch();
@@ -41,7 +42,7 @@ const workOfABrowser = async () => {
       // if (allData.length === 1) console.log('allData with length===1', allData);
     }
   };
-  await run(work, pagePerBrowser, timeOfABrowser);
+  await run(work, pagesPerBrowser, timeOfABrowser);
   await browser.close();
 };
 
