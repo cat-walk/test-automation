@@ -3,7 +3,7 @@
  * @Github: https://github.com/cat-walk
  * @Date: 2019-08-12 19:47:24
  * @LastEditors: Alfred Yang
- * @LastEditTime: 2019-08-17 19:39:43
+ * @LastEditTime: 2019-08-19 03:53:26
  * @Description: file content
  */
 
@@ -24,17 +24,17 @@ const fs = require('fs');
 
 const run = async (fn, times, totalTime) => {
   const interval = totalTime / times;
-  let hasRun = 0;
+  let hasRunTimes = 0;
   const concurrentPool = [];
   return new Promise((resolve, reject) => {
     let timer = setInterval(() => {
       concurrentPool.push(fn());
-      hasRun++;
-      if (hasRun === times) {
+      hasRunTimes++;
+      if (hasRunTimes === times) {
         // console.log('concurrentPool', concurrentPool);
         clearInterval(timer);
         timer = null;
-        console.log('hasRun', hasRun);
+        console.log('hasRunTimes', hasRunTimes);
         if (concurrentPool.length === 0) resolve();
         else {
           Promise.all(concurrentPool)
