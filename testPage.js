@@ -13,10 +13,21 @@ async function testPage(page) {
     // await page.setViewport({ width: 1920, height: 1080 });
     // await page.goto('https://summit.aelf.io/test.html');
     // await page.goto('http://192.168.199.216:5000/test.html');
-    await page.goto('https://baidu.com');
+    await page.goto('https://baidu.com', {
+      timeout: 120000,
+      waitUntil: 'networkidle2'
+    });
 
     const performanceTiming = JSON.parse(
       await page.evaluate(() => JSON.stringify(window.performance.timing))
+    );
+
+    const metricsB = extractDataFromPerformanceTiming(
+      performanceTiming,
+      'responseEnd',
+      'domInteractive',
+      'domContentLoadedEventEnd',
+      'loadEventEnd'
     );
 
     let firstMeaningfulPaint = 0;
@@ -36,13 +47,7 @@ async function testPage(page) {
       performanceMetrics,
       'FirstMeaningfulPaint'
     );
-    const metricsB = extractDataFromPerformanceTiming(
-      performanceTiming,
-      'responseEnd',
-      'domInteractive',
-      'domContentLoadedEventEnd',
-      'loadEventEnd'
-    );
+
     return { ...metricsA, ...metricsB };
   } catch (err) {
     console.log(err);
