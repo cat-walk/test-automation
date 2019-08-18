@@ -3,7 +3,7 @@
  * @Github: https://github.com/cat-walk
  * @Date: 2019-08-15 11:53:23
  * @LastEditors: Alfred Yang
- * @LastEditTime: 2019-08-17 20:29:53
+ * @LastEditTime: 2019-08-19 03:57:14
  * @Description: file content
  */
 const EventEmitter = require('events');
@@ -14,34 +14,36 @@ const { run, saveData, getAverage } = require('./utils');
 process.env.UV_THREADPOOL_SIZE = 128;
 EventEmitter.defaultMaxListeners = 100;
 
+const work = async (browser, allData) => {
+  const page = await browser.newPage();
+  const dataOfASample = await testPage(page);
+  await page.close();
+  if (dataOfASample && dataOfASample.FirstMeaningfulPaint > 0) {
+    allData.push(dataOfASample);
+  }
+};
+
 const workOfABrowser = async allData => {
   const browser = await puppeteer.launch({
     headless: true,
-    // args: [
-    //   '–disable-gpu',
-    //   '–disable-dev-shm-usage',
-    //   '–disable-setuid-sandbox',
-    //   '–no-first-run',
-    //   '–no-sandbox',
-    //   '–no-zygote',
-    //   '–single-process'
-    // ]
+    args: [
+      '–disable-gpu',
+      '–disable-dev-shm-usage',
+      '–disable-setuid-sandbox',
+      '–no-first-run',
+      '–no-sandbox',
+      '–no-zygote',
+      '–single-process',
+      '--disable-extensions'
+    ], // for improve perf
   });
-  const work = async () => {
-    const page = await browser.newPage();
-    const dataOfASample = await testPage(page);
-    await page.close();
-    if (dataOfASample && dataOfASample.FirstMeaningfulPaint > 0) {
-      allData.push(dataOfASample);
-    }
-  };
-  await run(work, 10, 100);
+  await run(work.bind(null, browser, allData), 20, 200);
   await browser.close();
 };
 
 (async () => {
   const allData = [];
-  await run(workOfABrowser.bind(null, allData), 10, 1000);
+  await run(workOfABrowser.bind(null, allData), 5, 1000);
   const average = await getAverage(allData);
   await saveData(
     JSON.stringify({
