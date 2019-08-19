@@ -3,7 +3,7 @@
  * @Github: https://github.com/cat-walk
  * @Date: 2019-08-12 19:47:24
  * @LastEditors: Alfred Yang
- * @LastEditTime: 2019-08-19 03:53:26
+ * @LastEditTime: 2019-08-19 08:22:34
  * @Description: file content
  */
 
@@ -91,4 +91,37 @@ const getAverage = allData => {
 //   }
 // };
 
-module.exports = { run, saveData, getAverage };
+const getTP = (TPNum, samplerGroup) => {
+  samplerGroup.sort((prev, next) => prev - next);
+  const index = Math.floor((samplerGroup.length * TPNum) / 100);
+  return samplerGroup[index];
+};
+
+const getMetricTPGroup = allData => {
+  const MetricTPGroup = {};
+  const TPNumGroup = [50, 80, 90, 95, 99];
+  const processedData = {};
+  allData.forEach(sampler => {
+    for (const [metric, value] of Object.entries(sampler)) {
+      if (!processedData[metric]) {
+        processedData[metric] = [value];
+      } else processedData[metric].push(value);
+    }
+  });
+  for (const [metric, arr] of Object.entries(processedData)) {
+    const TPGroup = {};
+    TPNumGroup.forEach(TPNum => {
+      TPGroup[`TP${TPNum}`] = getTP(TPNum, arr).toFixed(0);
+    });
+    // console.log('TPGroup', TPGroup);
+    MetricTPGroup[metric] = TPGroup;
+  }
+  return MetricTPGroup;
+};
+
+module.exports = {
+  run,
+  saveData,
+  getAverage,
+  getMetricTPGroup
+};
