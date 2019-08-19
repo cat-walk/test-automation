@@ -3,7 +3,7 @@
  * @Github: https://github.com/cat-walk
  * @Date: 2019-08-12 19:47:24
  * @LastEditors: Alfred Yang
- * @LastEditTime: 2019-08-19 08:22:34
+ * @LastEditTime: 2019-08-19 17:08:16
  * @Description: file content
  */
 
@@ -119,9 +119,12 @@ const getMetricTPGroup = allData => {
   return MetricTPGroup;
 };
 
+const judgeIsMeaningfulSample = dataOfASample => dataOfASample && Object.values(dataOfASample).every(metric => metric > 0);
+
 module.exports = {
   run,
   saveData,
   getAverage,
-  getMetricTPGroup
+  getMetricTPGroup,
+  judgeIsMeaningfulSample
 };
