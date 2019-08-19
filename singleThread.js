@@ -3,7 +3,7 @@
  * @Github: https://github.com/cat-walk
  * @Date: 2019-08-15 11:53:23
  * @LastEditors: Alfred Yang
- * @LastEditTime: 2019-08-19 08:23:30
+ * @LastEditTime: 2019-08-19 08:45:13
  * @Description: file content
  */
 const EventEmitter = require('events');
@@ -15,6 +15,11 @@ const {
 
 process.env.UV_THREADPOOL_SIZE = 128;
 EventEmitter.defaultMaxListeners = 100;
+
+const totalTime = 1000;
+const browserNum = 5;
+const pagesPerBrowser = 10;
+const timeOfABrowser = totalTime / browserNum;
 
 const work = async (browser, allData) => {
   const page = await browser.newPage();
@@ -40,13 +45,13 @@ const workOfABrowser = async allData => {
       '--disable-extensions'
     ] // for improve perf
   });
-  await run(work.bind(null, browser, allData), 5, 1000);
+  await run(work.bind(null, browser, allData), pagesPerBrowser, timeOfABrowser);
   await browser.close();
 };
 
 (async () => {
   const allData = [];
-  await run(workOfABrowser.bind(null, allData), 10, 1000);
+  await run(workOfABrowser.bind(null, allData), browserNum, totalTime);
   const average = await getAverage(allData);
   const MetricTPGroup = await getMetricTPGroup(allData);
 
