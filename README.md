@@ -3,7 +3,7 @@
  * @Github: https://github.com/cat-walk
  * @Date: 2019-08-18 23:53:28
  * @LastEditors: Alfred Yang
- * @LastEditTime: 2019-08-19 07:37:26
+ * @LastEditTime: 2019-08-19 08:55:16
  * @Description: file content
  -->
 
@@ -67,3 +67,14 @@ First Meaningful Paint: First Meaningful Paint measures when the primary content
 TP50/80/90/95/99
 TP=Top Percentile，Top 百分数，是一个统计学里的术语，与平均数、中位数都是一类。
 TP50、TP90 和 TP99 等指标常用于系统性能监控场景，指高于 50%、90%、99%等百分线的情况。
+
+## Use Guide
+
+### SingleThread Mode
+
+In singleThread mode, the config of 5 browsers with 10 pages per browser, tends to run better than the config of 10 browsers with 5 pages per browser.
+
+## Todo
+
+1. Improve the concurrent efficiency when trying to view many pages at one time.
+2. Provide GUI for the output of project.
